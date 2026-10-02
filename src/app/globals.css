@@ -2081,6 +2081,11 @@ a {
   display: block;
   overflow: visible;
 }
+.filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
 .chip {
   border: 1.5px solid rgba(33, 29, 24, 0.35);
   background: transparent;

@@ -262,7 +262,7 @@ function IndiaMapContent() {
       {/* MAP STAGE */}
       <main className="stage">
         <div className="stage__bar">
-          <div className="filters" role="group" aria-label="Filter by craft">
+          <div className="filters flex gap-[10px] flex-wrap" id="filters" role="group" aria-label="Filter by craft">
             <button
               type="button"
               className={`chip ${craftFilter === "all" ? "is-active" : ""}`}
