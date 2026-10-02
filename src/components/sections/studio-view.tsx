@@ -49,6 +49,26 @@ const FAQS = [
     q: "What materials do you use for sculptures?",
     a: "Fabricated metal, fibre/FRP, stone, concrete, wood and mixed media, chosen for the environment, scale and look of the piece.",
   },
+  {
+    q: "What does Paperplane do?",
+    a: "Paperplane is a mural art studio in India. We create hand-painted murals, sculptures, augmented reality and CGI for brands, cities and public spaces, from the first sketch to the finished wall.",
+  },
+  {
+    q: "Where has Paperplane painted?",
+    a: "63 projects across 15 Indian cities, including Pune, Mumbai, Chennai, Bengaluru, Delhi, Gurugram, Noida, Prayagraj, and in 7 countries: India, Finland, Germany, Nigeria, Sri Lanka, UAE, USA.",
+  },
+  {
+    q: "What is the largest mural Paperplane has painted?",
+    a: "The Kumbh Mela 2025 walls in Prayagraj, at 2,00,000 sq ft. The largest single building is Dynamatic Technologies in Bengaluru, at 24,000 sq ft. In total the studio has painted 4,35,000+ sq ft.",
+  },
+  {
+    q: "Which brands has Paperplane worked with?",
+    a: "Netflix, Pepsi, Oppo, United Colors of Benetton, Breitling, Reserve Bank of India, Panchshil, MAX Estates, Dynamatic Technologies, Aditya Birla Group, Mumbai Indians, Renault, Chargezone and Jawa Yezdi, among others.",
+  },
+  {
+    q: "How do I start a project with Paperplane?",
+    a: "Send a message on WhatsApp at +91 84603 49325, email connect.paperplane@gmail.com, or use the enquiry form on the contact page. A mood or a feeling is enough to begin.",
+  },
 ];
 
 export function StudioView() {

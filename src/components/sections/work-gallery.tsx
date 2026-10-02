@@ -283,6 +283,175 @@ export function WorkGallery() {
             );
           })}
         </section>
+
+        {/* PROJECT INDEX */}
+        <section className="widx" aria-labelledby="widxTitle">
+          <p className="eyebrow">Project index</p>
+          <h2 className="widx__title" id="widxTitle">
+            Every project, by city.
+          </h2>
+          <p className="widx__sub">
+            51 walls and sculptures shown here, from 63 projects in all, across 15 Indian cities and 7 countries.
+          </p>
+          <div className="widx__grid">
+            <div className="widx__city">
+              <h3>Pune</h3>
+              <ul>
+                <li>Panchshil Group</li>
+                <li>Panchshil Group II</li>
+                <li>Reserve Bank of India</li>
+                <li>Pivo</li>
+                <li>Breitling</li>
+                <li>Nexus Westend Facade</li>
+                <li>Nexus Westend Atrium</li>
+                <li>Nexus Westend Parking Lot</li>
+                <li>Mpower · Aditya Birla</li>
+                <li>Pivo <em>sculpture</em></li>
+                <li>Pillars · Arch Entrance · Vault Door <em>sculpture</em></li>
+                <li>Nexus Westend Sculptures <em>sculpture</em></li>
+                <li>HPL Premier League</li>
+              </ul>
+            </div>
+            <div className="widx__city">
+              <h3>Mumbai</h3>
+              <ul>
+                <li>Cafe Nur</li>
+                <li>Kalki</li>
+                <li>Good Homes</li>
+                <li>The Cram Bar</li>
+                <li>4th Peg</li>
+                <li>Jawa · Yezdi</li>
+                <li>Young-Hee Doll <em>sculpture</em></li>
+                <li>Mumbai Indians <em>sculpture</em></li>
+                <li>Skill Development Hostel</li>
+              </ul>
+            </div>
+            <div className="widx__city">
+              <h3>Chennai</h3>
+              <ul>
+                <li>Start India</li>
+                <li>Chargezone</li>
+                <li>Renault Design Studio</li>
+                <li>Chargezone Pondur</li>
+              </ul>
+            </div>
+            <div className="widx__city">
+              <h3>Bengaluru</h3>
+              <ul>
+                <li>Dynamatic Technologies</li>
+                <li>Sleepy Head × Go Rally</li>
+                <li>Biergarten</li>
+              </ul>
+            </div>
+            <div className="widx__city">
+              <h3>Delhi</h3>
+              <ul>
+                <li>MAX Estates</li>
+                <li>Oppo India</li>
+              </ul>
+            </div>
+            <div className="widx__city">
+              <h3>Gurugram</h3>
+              <ul>
+                <li>United Colors of Benetton</li>
+                <li>MAX Estates Sculptures <em>sculpture</em></li>
+              </ul>
+            </div>
+            <div className="widx__city">
+              <h3>Noida</h3>
+              <ul>
+                <li>MAX Estates Tunnel</li>
+                <li>MAX Estates Underpass</li>
+              </ul>
+            </div>
+            <div className="widx__city">
+              <h3>Prayagraj</h3>
+              <ul>
+                <li>Kumbh Mela 2025</li>
+                <li>Prayagraj Airport</li>
+              </ul>
+            </div>
+            <div className="widx__city">
+              <h3>Vadodara</h3>
+              <ul>
+                <li>Lilleria House</li>
+                <li>Concentric Analytics</li>
+              </ul>
+            </div>
+            <div className="widx__city">
+              <h3>Gandhidham</h3>
+              <ul>
+                <li>GD Goenka School</li>
+              </ul>
+            </div>
+            <div className="widx__city">
+              <h3>Goa</h3>
+              <ul>
+                <li>United Colors of Benetton</li>
+              </ul>
+            </div>
+            <div className="widx__city">
+              <h3>Hyderabad</h3>
+              <ul>
+                <li>Thridhara</li>
+              </ul>
+            </div>
+            <div className="widx__city">
+              <h3>Kochi</h3>
+              <ul>
+                <li>United Colors of Benetton</li>
+              </ul>
+            </div>
+            <div className="widx__city">
+              <h3>Lonavala</h3>
+              <ul>
+                <li>Wet N Joy</li>
+              </ul>
+            </div>
+            <div className="widx__city">
+              <h3>Nashik</h3>
+              <ul>
+                <li>Ugam Literature Festival <em>sculpture</em></li>
+              </ul>
+            </div>
+            <div className="widx__city">
+              <h3>Dubai, UAE</h3>
+              <ul>
+                <li>La Bella Art Studio</li>
+              </ul>
+            </div>
+            <div className="widx__city">
+              <h3>Germany</h3>
+              <ul>
+                <li>Meeting of Styles</li>
+              </ul>
+            </div>
+            <div className="widx__city">
+              <h3>Finland</h3>
+              <ul>
+                <li>Meeting of Styles</li>
+              </ul>
+            </div>
+            <div className="widx__city">
+              <h3>Nigeria</h3>
+              <ul>
+                <li>Indorama</li>
+              </ul>
+            </div>
+            <div className="widx__city">
+              <h3>Sri Lanka</h3>
+              <ul>
+                <li>Pepsi</li>
+              </ul>
+            </div>
+            <div className="widx__city">
+              <h3>San Francisco, USA</h3>
+              <ul>
+                <li>Street mural</li>
+              </ul>
+            </div>
+          </div>
+        </section>
       </main>
 
       {/* CTA STRIP */}
