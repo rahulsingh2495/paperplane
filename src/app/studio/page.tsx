@@ -1,12 +1,8 @@
-import type { Metadata } from "next";
+"use client";
+
+import { useEffect } from "react";
 import Image from "next/image";
 import { site } from "@/lib/site";
-
-export const metadata: Metadata = {
-  title: "The Studio",
-  description:
-    "Paperplane is a multidisciplinary art studio at the intersection of art, space and technology: murals, sculptures, AR and CGI. Meet the people behind the plane.",
-};
 
 const TEAM = [
   {
@@ -56,6 +52,27 @@ const FAQS = [
 ];
 
 export default function StudioPage() {
+  useEffect(() => {
+    const els = document.querySelectorAll(".up");
+    if (!("IntersectionObserver" in window)) {
+      els.forEach((e) => e.classList.add("in"));
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting) {
+            en.target.classList.add("in");
+            io.unobserve(en.target);
+          }
+        });
+      },
+      { rootMargin: "0px 0px -8% 0px" }
+    );
+    els.forEach((e) => io.observe(e));
+    return () => io.disconnect();
+  }, []);
+
   return (
     <main>
       {/* OPENING */}
@@ -70,7 +87,7 @@ export default function StudioPage() {
             that move people.
           </p>
         </div>
-        <figure className="s-hero__img">
+        <figure className="s-hero__img up">
           <div className="relative aspect-[3/2] overflow-hidden">
             <Image
               src="/studio/img/team-at-dynamatics.jpg"
@@ -89,16 +106,16 @@ export default function StudioPage() {
 
       {/* MANIFESTO */}
       <section className="s-manifesto">
-        <p className="s-manifesto__lead">
+        <p className="s-manifesto__lead up">
           A multidisciplinary studio working where <em>art, space and technology</em> meet.
         </p>
         <div className="s-manifesto__cols">
-          <p>
+          <p className="up">
             We create large-scale murals, sculptural installations and immersive visual experiences
             that turn environments into stories. Our practice moves between the physical and the
             digital: public art, architectural environments, augmented reality and CGI.
           </p>
-          <p>
+          <p className="up">
             Every project is site-responsive and concept-led: a precise answer to its context,
             informed by architecture, culture and movement. From urban landmarks to brand
             environments, the work is made to be experienced, not just looked at.
@@ -108,7 +125,7 @@ export default function StudioPage() {
 
       {/* WHY A PAPER PLANE */}
       <section className="s-origin">
-        <div className="s-origin__media">
+        <div className="s-origin__media up">
           <div className="relative aspect-[1189/543] overflow-hidden">
             <Image
               src="/studio/img/kartikey-painting.jpg"
@@ -121,8 +138,8 @@ export default function StudioPage() {
         </div>
         <div className="s-origin__text">
           <p className="eyebrow">Why a paper plane</p>
-          <h2 className="h-lg">It started in the corner of a page.</h2>
-          <p>
+          <h2 className="h-lg up">It started in the corner of a page.</h2>
+          <p className="up">
             A little paper plane, doodled in the corner of a school notebook, became our name. It is
             still how we work: every project starts as an idea on paper, and we don&apos;t stop until
             it flies.
@@ -138,7 +155,7 @@ export default function StudioPage() {
         </div>
         <div className="s-team__grid">
           {TEAM.map((member) => (
-            <figure key={member.name} className="member">
+            <figure key={member.name} className="member up">
               <div className="member__img relative">
                 <Image
                   src={member.img}
@@ -169,7 +186,7 @@ export default function StudioPage() {
         </div>
         <div className="s-faq__list">
           {FAQS.map((faq, i) => (
-            <details key={faq.q} open={i === 0}>
+            <details key={faq.q} open={i === 0} className="up">
               <summary>{faq.q}</summary>
               <p>{faq.a}</p>
             </details>

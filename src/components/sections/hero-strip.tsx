@@ -59,7 +59,7 @@ export function HeroStrip() {
 
     timerRef.current = setTimeout(() => {
       setActiveIndex((prev) => (prev + 1) % STRIP_ITEMS.length);
-    }, 3500);
+    }, 2000);
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
@@ -100,6 +100,10 @@ export function HeroStrip() {
               key={item.title}
               href={item.href}
               className={`strip__item ${isActive ? "is-active" : ""}`}
+              onMouseEnter={() => {
+                setActiveIndex(idx);
+                setIsPlaying(false);
+              }}
               onClick={(e) => {
                 if (!isActive) {
                   e.preventDefault();

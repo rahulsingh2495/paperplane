@@ -1,4 +1,5 @@
 import { site } from "@/lib/site";
+import { StatNumber } from "@/components/ui/stat-number";
 
 export function ProofStats() {
   return (
@@ -22,22 +23,19 @@ export function ProofStats() {
 
       <div className="proof__stats">
         <div className="stat">
-          <b>{site.stats.projects}</b>
+          <StatNumber value={site.stats.projects} />
           <span>Projects</span>
         </div>
         <div className="stat">
-          <b>{site.stats.cities}</b>
+          <StatNumber value={site.stats.cities} />
           <span>Cities across India</span>
         </div>
         <div className="stat">
-          <b>{site.stats.countries}</b>
+          <StatNumber value={site.stats.countries} />
           <span>Countries</span>
         </div>
         <div className="stat stat--wide">
-          <b>
-            {site.stats.sqft.toLocaleString("en-IN")}
-            <sup>+</sup>
-          </b>
+          <StatNumber value={site.stats.sqft} hasPlus />
           <span>Sq ft painted</span>
         </div>
       </div>

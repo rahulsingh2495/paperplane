@@ -223,6 +223,12 @@ export function ContactForm() {
         />
       </label>
 
+      {/* spam trap */}
+      <label className="f-trap" aria-hidden="true" style={{ display: "none" }}>
+        Leave this empty
+        <input type="text" name="_honey" tabIndex={-1} autoComplete="off" />
+      </label>
+
       {errorMessage && (
         <p className="ct__error" role="alert">
           {errorMessage}
@@ -230,7 +236,7 @@ export function ContactForm() {
       )}
 
       <button className="ct__submit" type="submit" disabled={status === "submitting"}>
-        <span>{status === "submitting" ? "Sending enquiry..." : "Send enquiry"}</span>{" "}
+        <span>{status === "submitting" ? "Sending…" : "Send enquiry"}</span>{" "}
         <b aria-hidden="true">→</b>
       </button>
 

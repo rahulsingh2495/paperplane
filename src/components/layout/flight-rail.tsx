@@ -52,8 +52,31 @@ export function FlightRail() {
     window.scrollTo({ top, behavior: "smooth" });
   };
 
-  // Rail occupies 14vh to 86vh (height 72vh)
+  // Rail occupies 14vh to 86vh (top:14vh, height 72vh)
   const planeTopVh = 14 + scrollProgress * 72;
+  const [dotPositions, setDotPositions] = useState<number[]>([14, 28, 48, 66, 86]);
+
+  useEffect(() => {
+    const updatePositions = () => {
+      const scrollable = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const positions = STOPS.map((stop) => {
+        const el = document.getElementById(stop.id);
+        if (!el) return 14;
+        const top = el.getBoundingClientRect().top + window.scrollY;
+        const frac = Math.min(1, Math.max(0, top / scrollable));
+        return 14 + frac * 72;
+      });
+      setDotPositions(positions);
+    };
+
+    updatePositions();
+    window.addEventListener("resize", updatePositions);
+    const t = setTimeout(updatePositions, 500);
+    return () => {
+      window.removeEventListener("resize", updatePositions);
+      clearTimeout(t);
+    };
+  }, []);
 
   return (
     <nav className="rail" id="rail" aria-label="Section navigation">
@@ -63,7 +86,7 @@ export function FlightRail() {
 
       <div className="rail__dots" id="railDots">
         {STOPS.map((stop, i) => {
-          const dotTopVh = 14 + (i / (STOPS.length - 1)) * 72;
+          const dotTopVh = dotPositions[i] ?? (14 + (i / (STOPS.length - 1)) * 72);
           return (
             <button
               key={stop.id}

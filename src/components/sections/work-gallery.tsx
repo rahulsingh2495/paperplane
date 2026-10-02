@@ -170,6 +170,31 @@ export function WorkGallery() {
     setLightboxState(null);
   }, []);
 
+  const [touchX, setTouchX] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (lightboxState !== null) {
+      document.body.classList.add("no-scroll");
+    } else {
+      document.body.classList.remove("no-scroll");
+    }
+    return () => document.body.classList.remove("no-scroll");
+  }, [lightboxState]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 45) {
+      if (dx < 0) nextPhoto();
+      else prevPhoto();
+    }
+    setTouchX(null);
+  };
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!lightboxState) return;
@@ -273,6 +298,8 @@ export function WorkGallery() {
         className={`lb ${lightboxState !== null ? "is-open" : ""}`}
         id="lb"
         aria-hidden={lightboxState === null}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
         onClick={(e) => {
           if (e.target === e.currentTarget) closeLightbox();
         }}
@@ -293,27 +320,26 @@ export function WorkGallery() {
                 className="lb__nav lb__prev"
                 id="lbPrev"
                 type="button"
-                aria-label="Previous photo"
+                aria-label="Previous"
                 onClick={prevPhoto}
               >
                 ←
               </button>
             )}
             <figure>
-              <div className="relative max-h-[78vh] w-auto inline-block">
-                <img
-                  id="lbImg"
-                  src={`/map/img/t/${activeItem.images[lightboxState!.photoIndex]}`}
-                  alt={`${activeItem.title}, ${activeItem.place}`}
-                  className="max-h-[78vh] max-w-[88vw] object-contain mx-auto"
-                />
-              </div>
+              <img
+                id="lbImg"
+                src={`/map/img/${activeItem.images[lightboxState!.photoIndex]}`}
+                alt={`${activeItem.title}, ${activeItem.place}`}
+              />
               <figcaption>
                 <span id="lbCap">
                   {activeItem.title} · {activeItem.place}
                 </span>{" "}
                 <span id="lbIdx">
-                  ({lightboxState!.photoIndex + 1} of {activeItem.images.length})
+                  {activeItem.images.length > 1
+                    ? `${lightboxState!.photoIndex + 1} / ${activeItem.images.length}`
+                    : ""}
                 </span>
               </figcaption>
             </figure>
@@ -322,7 +348,7 @@ export function WorkGallery() {
                 className="lb__nav lb__next"
                 id="lbNext"
                 type="button"
-                aria-label="Next photo"
+                aria-label="Next"
                 onClick={nextPhoto}
               >
                 →

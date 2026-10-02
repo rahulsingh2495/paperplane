@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { INDIA, CITIES, PROJECTS, INTERNATIONAL, type ProjectItem } from "@/lib/data";
 import { site } from "@/lib/site";
+import { StatNumber } from "@/components/ui/stat-number";
 
 const LABELS: Record<string, [number, number, "start" | "end" | "middle"]> = {
   Delhi: [14, -14, "start"],
@@ -21,6 +23,21 @@ const LABELS: Record<string, [number, number, "start" | "end" | "middle"]> = {
   Vadodara: [16, 2, "start"],
   Gandhidham: [-6, -16, "end"],
   Prayagraj: [14, -10, "start"],
+};
+
+const BRAND_LINKS: Record<string, [string, string, string?]> = {
+  "Nexus Westend": ["Pune", "westend"],
+  "Netflix": ["Mumbai", "young-hee"],
+  "Pepsi": ["Sri Lanka", "pepsi", "intl"],
+  "Jawa": ["Mumbai", "jawa"],
+  "Breitling": ["Pune", "breitling"],
+  "Aditya Birla Group": ["Pune", "mpower"],
+  "Dynamatic Technologies": ["Bengaluru", "dynamatics"],
+  "Reserve Bank of India": ["Pune", "rbi"],
+  "Panchshil": ["Pune", "panchshil-17k"],
+  "IPL": ["Mumbai", "mumbai-indians"],
+  "Oppo": ["Delhi", "oppo"],
+  "United Colors of Benetton": ["Gurugram", "benetton"],
 };
 
 const BRAND_LOGOS = [
@@ -53,8 +70,20 @@ const BRAND_LOGOS = [
 ];
 
 export function IndiaMapSection() {
+  return (
+    <Suspense fallback={null}>
+      <IndiaMapContent />
+    </Suspense>
+  );
+}
+
+function IndiaMapContent() {
+  const searchParams = useSearchParams();
   const [craftFilter, setCraftFilter] = useState<"all" | "mural" | "sculpture">("all");
   const [activeCity, setActiveCity] = useState<string | null>(null);
+  const [focusSlug, setFocusSlug] = useState<string | null>(null);
+  const [customProjects, setCustomProjects] = useState<ProjectItem[] | null>(null);
+  const [touchX, setTouchX] = useState<number | null>(null);
   const [lightboxData, setLightboxData] = useState<{
     images: string[];
     currentIndex: number;
@@ -71,7 +100,53 @@ export function IndiaMapSection() {
     return map;
   }, [craftFilter]);
 
-  const activeCityProjects = activeCity ? cityGroups[activeCity] || [] : [];
+  const openPlace = useCallback((place: string, slug?: string) => {
+    const intlItem = INTERNATIONAL.find((i) => i.place === place || i.place.startsWith(place));
+    if (intlItem && !PROJECTS.some((p) => p.city === place)) {
+      setCustomProjects([{ ...intlItem, city: intlItem.place, sqft: "", note: "", type: "mural" }]);
+      setActiveCity(intlItem.place);
+    } else {
+      setCustomProjects(null);
+      setActiveCity(place);
+    }
+    if (slug) setFocusSlug(slug);
+  }, []);
+
+  // Handle deep links: ?city=Pune&focus=rbi
+  useEffect(() => {
+    const city = searchParams.get("city");
+    const focus = searchParams.get("focus");
+    if (city) {
+      openPlace(city, focus || undefined);
+    }
+  }, [searchParams, openPlace]);
+
+  // Body lock when panel or lightbox is open
+  useEffect(() => {
+    if (activeCity || lightboxData !== null) {
+      document.body.classList.add("no-scroll");
+    } else {
+      document.body.classList.remove("no-scroll");
+    }
+    return () => document.body.classList.remove("no-scroll");
+  }, [activeCity, lightboxData]);
+
+  // Scroll to focused project in panel
+  useEffect(() => {
+    if (activeCity && focusSlug) {
+      const timer = setTimeout(() => {
+        const el = document.getElementById(`proj-${focusSlug}`);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+          el.classList.add("proj--flash");
+          setTimeout(() => el.classList.remove("proj--flash"), 2000);
+        }
+      }, 350);
+      return () => clearTimeout(timer);
+    }
+  }, [activeCity, focusSlug]);
+
+  const activeCityProjects = customProjects || (activeCity ? cityGroups[activeCity] || [] : []);
 
   const closeLightbox = useCallback(() => {
     setLightboxData(null);
@@ -93,6 +168,20 @@ export function IndiaMapSection() {
         (lightboxData.currentIndex - 1 + lightboxData.images.length) % lightboxData.images.length,
     });
   }, [lightboxData]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 45) {
+      if (dx < 0) nextLightboxPhoto();
+      else prevLightboxPhoto();
+    }
+    setTouchX(null);
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -125,15 +214,15 @@ export function IndiaMapSection() {
         </div>
         <ul className="head__stats">
           <li>
-            <b>{site.stats.projects}</b>
+            <StatNumber value={site.stats.projects} />
             <span>projects</span>
           </li>
           <li>
-            <b>{site.stats.cities}</b>
+            <StatNumber value={site.stats.cities} />
             <span>cities</span>
           </li>
           <li>
-            <b>{site.stats.sqft.toLocaleString("en-IN")}+</b>
+            <StatNumber value={site.stats.sqft} hasPlus />
             <span>sq ft painted</span>
           </li>
         </ul>
@@ -341,27 +430,35 @@ export function IndiaMapSection() {
         <p className="brandslider__label">Brands love us</p>
         <div className="brandslider__viewport">
           <div className="brandslider__track">
-            {BRAND_LOGOS.map((brand) => (
-              <Image
-                key={brand.num}
-                src={`/img/brands/logo-${String(brand.num).padStart(2, "0")}.png`}
-                alt={brand.name}
-                width={170}
-                height={44}
-                className="h-11 w-auto max-w-[170px] object-contain flex-shrink-0"
-              />
-            ))}
-            {BRAND_LOGOS.map((brand) => (
-              <Image
-                key={`dup-${brand.num}`}
-                src={`/img/brands/logo-${String(brand.num).padStart(2, "0")}.png`}
-                alt=""
-                width={170}
-                height={44}
-                aria-hidden="true"
-                className="h-11 w-auto max-w-[170px] object-contain flex-shrink-0"
-              />
-            ))}
+            {BRAND_LOGOS.map((brand) => {
+              const link = BRAND_LINKS[brand.name];
+              return (
+                <Image
+                  key={brand.num}
+                  src={`/img/brands/logo-${String(brand.num).padStart(2, "0")}.png`}
+                  alt={brand.name}
+                  width={170}
+                  height={44}
+                  className={`h-11 w-auto max-w-[170px] object-contain flex-shrink-0 ${link ? "is-linked cursor-pointer" : ""}`}
+                  onClick={() => link && openPlace(link[0], link[1])}
+                />
+              );
+            })}
+            {BRAND_LOGOS.map((brand) => {
+              const link = BRAND_LINKS[brand.name];
+              return (
+                <Image
+                  key={`dup-${brand.num}`}
+                  src={`/img/brands/logo-${String(brand.num).padStart(2, "0")}.png`}
+                  alt=""
+                  width={170}
+                  height={44}
+                  aria-hidden="true"
+                  className={`h-11 w-auto max-w-[170px] object-contain flex-shrink-0 ${link ? "is-linked cursor-pointer" : ""}`}
+                  onClick={() => link && openPlace(link[0], link[1])}
+                />
+              );
+            })}
           </div>
         </div>
       </section>
@@ -369,7 +466,10 @@ export function IndiaMapSection() {
       {/* CITY DRAWER PANEL */}
       <div
         className={`panel-backdrop ${activeCity ? "is-open" : ""}`}
-        onClick={() => setActiveCity(null)}
+        onClick={() => {
+          setActiveCity(null);
+          setFocusSlug(null);
+        }}
       />
       <section className={`panel ${activeCity ? "is-open" : ""}`} aria-hidden={!activeCity}>
         <header className="panel__head">
@@ -383,7 +483,10 @@ export function IndiaMapSection() {
             className="panel__close"
             type="button"
             aria-label="Close"
-            onClick={() => setActiveCity(null)}
+            onClick={() => {
+              setActiveCity(null);
+              setFocusSlug(null);
+            }}
           >
             ✕
           </button>
@@ -435,6 +538,8 @@ export function IndiaMapSection() {
         className={`lightbox ${lightboxData !== null ? "is-open" : ""}`}
         id="lightbox"
         aria-hidden={lightboxData === null}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
         onClick={(e) => {
           if (e.target === e.currentTarget) closeLightbox();
         }}
@@ -460,19 +565,19 @@ export function IndiaMapSection() {
               </button>
             )}
             <figure>
-              <div className="relative max-h-[78vh] w-auto inline-block">
-                <img
-                  src={`/map/img/t/${lightboxData.images[lightboxData.currentIndex]}`}
-                  alt={`${lightboxData.title}, ${lightboxData.location}`}
-                  className="max-h-[78vh] max-w-[88vw] object-contain mx-auto"
-                />
-              </div>
+              <img
+                id="lbImg"
+                src={`/map/img/${lightboxData.images[lightboxData.currentIndex]}`}
+                alt={`${lightboxData.title}, ${lightboxData.location}`}
+              />
               <figcaption>
-                <span>
+                <span id="lbCaption">
                   {lightboxData.title} · {lightboxData.location}
                 </span>{" "}
                 <span id="lbIndex">
-                  ({lightboxData.currentIndex + 1} of {lightboxData.images.length})
+                  {lightboxData.images.length > 1
+                    ? `${lightboxData.currentIndex + 1} / ${lightboxData.images.length}`
+                    : ""}
                 </span>
               </figcaption>
             </figure>
