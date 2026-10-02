@@ -1,18 +1,32 @@
 @import "tailwindcss";
 
 /* Hide Netlify Badge across all devices and viewports */
+#nl-badge-frame,
+#nl-hud-frame,
+iframe[id*="nl-"],
+iframe[title*="Netlify" i],
+iframe[src*="netlify" i],
+iframe[srcdoc*="nl-"],
+iframe[srcdoc*="netlify" i],
 [data-netlify-badge],
 .netlify-badge,
 #netlify-badge,
-iframe[src*="netlify"],
 div[class*="netlify-badge"],
 a[href*="netlify.com"][class*="badge"],
 a[href*="netlify.com"] img,
+a[href*="netlify.com"],
 body > div[style*="fixed"][style*="bottom"][style*="right"] a[href*="netlify"] {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
+  clip-path: path("M0 0Z") !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  left: -99999px !important;
+  top: -99999px !important;
+  z-index: -99999 !important;
 }
 
 :root {

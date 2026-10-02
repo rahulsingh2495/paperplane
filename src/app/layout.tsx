@@ -78,13 +78,23 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){
-              function rm(){
-                document.querySelectorAll('a[href*="netlify.com"], [class*="netlify-badge"], [id*="netlify-badge"], [data-netlify-badge]').forEach(function(el){ el.remove(); });
+              function kill(){
+                try {
+                  window.postMessage({ nlHud: 'state', value: 'hidden' }, '*');
+                  var sel = '#nl-badge-frame, #nl-hud-frame, iframe[id*="nl-"], iframe[title*="Netlify" i], iframe[src*="netlify" i], a[href*="netlify.com"], [class*="netlify-badge"], [id*="netlify-badge"], [data-netlify-badge], script[data-nf-variant], script[src*="/hud"]';
+                  document.querySelectorAll(sel).forEach(function(el){
+                    if (el.dataset) delete el.dataset.nfVariant;
+                    el.remove();
+                  });
+                } catch(e){}
               }
-              rm();
+              kill();
               if (typeof MutationObserver !== 'undefined') {
-                new MutationObserver(rm).observe(document.documentElement, { childList: true, subtree: true });
+                new MutationObserver(kill).observe(document.documentElement, { childList: true, subtree: true });
               }
+              document.addEventListener('DOMContentLoaded', kill);
+              window.addEventListener('load', kill);
+              setInterval(kill, 250);
             })();`,
           }}
         />

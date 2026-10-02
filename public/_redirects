@@ -1,2 +1,6 @@
-# Netlify redirect rules
+# Block Netlify injected HUD / badge scripts
+/.netlify/scripts/hud*  /404  404!
+/.netlify/scripts/*  /404  404!
+
+# Netlify redirect rules for map assets
 /map/img/:file  /map/img/t/:file  200

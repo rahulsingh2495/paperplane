@@ -6,6 +6,23 @@
   BUN_VERSION = "latest"
   NODE_VERSION = "20"
 
+[[redirects]]
+  from = "/.netlify/scripts/hud*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.netlify/scripts/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/map/img/:file"
+  to = "/map/img/t/:file"
+  status = 200
+
 [[headers]]
   for = "/*"
   [headers.values]
