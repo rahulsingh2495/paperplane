@@ -1,3 +1,5 @@
+import React from "react";
+
 export function WordBar() {
   const words = [
     "Murals",
@@ -13,16 +15,16 @@ export function WordBar() {
     <section className="wordbar" aria-hidden="true">
       <div className="wordbar__track">
         {words.map((word, i) => (
-          <span key={`w1-${i}`}>
-            {word}
+          <React.Fragment key={`w1-${i}`}>
+            <span>{word}</span>
             <i>◦</i>
-          </span>
+          </React.Fragment>
         ))}
         {words.map((word, i) => (
-          <span key={`w2-${i}`}>
-            {word}
+          <React.Fragment key={`w2-${i}`}>
+            <span>{word}</span>
             <i>◦</i>
-          </span>
+          </React.Fragment>
         ))}
       </div>
     </section>
