@@ -77,7 +77,6 @@ export function Header() {
           width={577}
           height={329}
           priority
-          className="h-11 w-auto block"
         />
       </Link>
 
