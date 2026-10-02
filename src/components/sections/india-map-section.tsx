@@ -179,6 +179,17 @@ function IndiaMapContent() {
 
   const activeCityProjects = customProjects || (activeCity ? cityGroups[activeCity] || [] : []);
 
+  const panelEyebrow = useMemo(() => {
+    if (!activeCity) return "";
+    const murals = activeCityProjects.filter((p) => p.type !== "sculpture").length;
+    const sculpts = activeCityProjects.filter((p) => p.type === "sculpture").length;
+    const photos = activeCityProjects.reduce((sum, p) => sum + (p.images?.length || 0), 0);
+    const parts: string[] = [];
+    if (murals) parts.push(`${murals} mural${murals > 1 ? "s" : ""}`);
+    if (sculpts) parts.push(`${sculpts} sculpture${sculpts > 1 ? "s" : ""}`);
+    return `${parts.join(" · ")} · ${photos} photo${photos > 1 ? "s" : ""}`;
+  }, [activeCity, activeCityProjects]);
+
   const closeLightbox = useCallback(() => {
     setLightboxData(null);
   }, []);
@@ -473,13 +484,12 @@ function IndiaMapContent() {
               style={{ "--tilt": `${idx % 2 ? 1.5 : -1.5}deg` } as React.CSSProperties}
               onClick={() => openPlace(item.place)}
             >
-              <div className="relative aspect-[4/3] w-full overflow-hidden">
-                <Image
+              <div className="intl__img">
+                <img
                   src={`/map/img/t/${item.images[0]}`}
-                  alt={`${item.title}, ${item.place}`}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 640px) 50vw, (max-width: 1000px) 33vw, 16vw"
+                  alt={item.title}
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
               <div className="intl__meta">
@@ -540,10 +550,12 @@ function IndiaMapContent() {
       <section className={`panel ${activeCity ? "is-open" : ""}`} aria-hidden={!activeCity}>
         <header className="panel__head">
           <div>
-            <p className="panel__eyebrow">
-              {activeCityProjects.length} landmark{activeCityProjects.length > 1 ? "s" : ""}
+            <p className="panel__eyebrow" id="panelCount">
+              {panelEyebrow}
             </p>
-            <h2 className="panel__city">{activeCity}</h2>
+            <h2 className="panel__city" id="panelCity">
+              {activeCity || ""}
+            </h2>
           </div>
           <button
             className="panel__close"
@@ -582,15 +594,12 @@ function IndiaMapContent() {
                       })
                     }
                   >
-                    <div className="relative w-full h-[190px] overflow-hidden">
-                      <Image
-                        src={`/map/img/t/${imgName}`}
-                        alt={`${proj.title} in ${proj.city}`}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 640px) 100vw, 300px"
-                      />
-                    </div>
+                    <img
+                      src={`/map/img/t/${imgName}`}
+                      alt={`${proj.title} in ${proj.city}`}
+                      loading="lazy"
+                      decoding="async"
+                    />
                   </button>
                 ))}
               </div>

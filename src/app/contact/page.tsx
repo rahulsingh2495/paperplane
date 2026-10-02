@@ -34,7 +34,7 @@ export default function ContactPage() {
       <section className="ct__intro">
         <p className="eyebrow">Start a project</p>
         <h1 className="ct__title">
-          Got a wall? <em>Let’s talk.</em>
+          Got a wall? <em>Let&apos;s talk.</em>
         </h1>
         <p className="ct__lead">
           Tell us a little about your space and what you have in mind. A rough idea is enough: most

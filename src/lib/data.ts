@@ -308,7 +308,6 @@ export const PROJECTS: ProjectItem[] = [
     images: [
       "kumbh-1.jpg",
       "kumbh-2.jpg",
-      "kumbh-3.jpg",
       "kumbh-4.jpg",
       "kumbh-5.jpg",
       "kumbh-6.jpg",

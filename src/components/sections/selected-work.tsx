@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 
 const SELECTED_PROJECTS = [
   {
@@ -94,13 +93,12 @@ export function SelectedWork() {
             className={`proj ${proj.wide ? "proj--wide" : ""}`}
             href={proj.href}
           >
-            <div className="proj__img relative">
-              <Image
+            <div className="proj__img">
+              <img
                 src={proj.img}
                 alt={proj.alt}
-                fill
-                className="object-cover"
-                sizes={proj.wide ? "100vw" : "(max-width: 768px) 100vw, 50vw"}
+                loading="lazy"
+                decoding="async"
               />
             </div>
             <div className="proj__meta">

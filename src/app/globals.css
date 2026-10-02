@@ -1,5 +1,20 @@
 @import "tailwindcss";
 
+/* Hide Netlify Badge across all devices and viewports */
+[data-netlify-badge],
+.netlify-badge,
+#netlify-badge,
+iframe[src*="netlify"],
+div[class*="netlify-badge"],
+a[href*="netlify.com"][class*="badge"],
+a[href*="netlify.com"] img,
+body > div[style*="fixed"][style*="bottom"][style*="right"] a[href*="netlify"] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 :root {
   --paper: #d8d2c6;
   --paper-2: #cfc8ba;
@@ -2745,4 +2760,13 @@ a {
   color: var(--accent);
   font-weight: 700;
   margin-left: 6px;
+}
+
+/* ============ SPAM TRAP (.f-trap) ============ */
+.f-trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }

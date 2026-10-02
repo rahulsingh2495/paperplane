@@ -112,13 +112,10 @@ export function HeroStrip() {
               }}
               onFocus={() => setActiveIndex(idx)}
             >
-              <Image
+              <img
                 src={item.img}
                 alt={item.alt}
-                fill
-                priority={idx === 0}
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                {...(idx === 0 ? { fetchPriority: "high" } : {})}
               />
               <span className="strip__cap">
                 <b>{item.title}</b> {item.location}

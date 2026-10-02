@@ -74,27 +74,15 @@ export function ContactForm() {
     }
   };
 
-  if (status === "success") {
-    return (
-      <div className="ct__done" id="formDone" tabIndex={-1}>
-        <p className="eyebrow">Enquiry sent</p>
-        <h2>
-          Thank you. <em>Your idea has taken off.</em>
-        </h2>
-        <p>
-          We&apos;ve received your message and will get back to you soon. If it&apos;s urgent, message
-          us on{" "}
-          <a href="https://wa.me/918460349325" target="_blank" rel="noopener noreferrer">
-            WhatsApp
-          </a>
-          .
-        </p>
-      </div>
-    );
-  }
-
   return (
-    <form className="ct__form" id="enquiry" onSubmit={handleSubmit} noValidate>
+    <>
+      <form
+        className="ct__form"
+        id="enquiry"
+        onSubmit={handleSubmit}
+        noValidate
+        hidden={status === "success"}
+      >
       <div className="f-row">
         <label className="f">
           <span>
@@ -224,7 +212,7 @@ export function ContactForm() {
       </label>
 
       {/* spam trap */}
-      <label className="f-trap" aria-hidden="true" style={{ display: "none" }}>
+      <label className="f-trap" aria-hidden="true">
         Leave this empty
         <input type="text" name="_honey" tabIndex={-1} autoComplete="off" />
       </label>
@@ -245,5 +233,21 @@ export function ContactForm() {
         enquiry.
       </p>
     </form>
+
+    <div className="ct__done" id="formDone" hidden={status !== "success"} tabIndex={-1}>
+      <p className="eyebrow">Enquiry sent</p>
+      <h2>
+        Thank you. <em>Your idea has taken off.</em>
+      </h2>
+      <p>
+        We&apos;ve received your message and will get back to you soon. If it&apos;s urgent, message
+        us on{" "}
+        <a href="https://wa.me/918460349325" target="_blank" rel="noopener noreferrer">
+          WhatsApp
+        </a>
+        .
+      </p>
+    </div>
+  </>
   );
 }

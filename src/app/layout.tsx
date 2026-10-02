@@ -75,6 +75,19 @@ export default function RootLayout({
       className={`${bebasNeue.variable} ${syne.variable} ${spaceGrotesk.variable}`}
     >
       <body>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){
+              function rm(){
+                document.querySelectorAll('a[href*="netlify.com"], [class*="netlify-badge"], [id*="netlify-badge"], [data-netlify-badge]').forEach(function(el){ el.remove(); });
+              }
+              rm();
+              if (typeof MutationObserver !== 'undefined') {
+                new MutationObserver(rm).observe(document.documentElement, { childList: true, subtree: true });
+              }
+            })();`,
+          }}
+        />
         <div className="grain" aria-hidden="true" />
         <Header />
         {children}

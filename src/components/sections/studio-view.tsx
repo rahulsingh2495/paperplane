@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import Image from "next/image";
 import { site } from "@/lib/site";
 
 const TEAM = [
@@ -108,16 +107,11 @@ export function StudioView() {
           </p>
         </div>
         <figure className="s-hero__img up">
-          <div className="relative aspect-[3/2] overflow-hidden">
-            <Image
-              src="/studio/img/team-at-dynamatics.jpg"
-              alt="The Paperplane team in front of the Dynamatic Technologies mural, Bengaluru"
-              fill
-              priority
-              className="object-cover"
-              sizes="(max-width: 900px) 100vw, 55vw"
-            />
-          </div>
+          <img
+            src="/studio/img/team-at-dynamatics.jpg"
+            alt="The Paperplane team in front of the Dynamatic Technologies mural, Bengaluru"
+            fetchPriority="high"
+          />
           <figcaption>
             The crew at Dynamatic Technologies, Bengaluru. 24,000 sq ft, painted by hand.
           </figcaption>
@@ -146,15 +140,12 @@ export function StudioView() {
       {/* WHY A PAPER PLANE */}
       <section className="s-origin">
         <div className="s-origin__media up">
-          <div className="relative aspect-[1189/543] overflow-hidden">
-            <Image
-              src="/studio/img/kartikey-painting.jpg"
-              alt="Paperplane artists spray-painting a mural"
-              fill
-              className="object-cover"
-              sizes="(max-width: 900px) 100vw, 55vw"
-            />
-          </div>
+          <img
+            src="/studio/img/kartikey-painting.jpg"
+            alt="Paperplane artists spray-painting a mural"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
         <div className="s-origin__text">
           <p className="eyebrow">Why a paper plane</p>
@@ -176,13 +167,12 @@ export function StudioView() {
         <div className="s-team__grid">
           {TEAM.map((member) => (
             <figure key={member.name} className="member up">
-              <div className="member__img relative">
-                <Image
+              <div className="member__img">
+                <img
                   src={member.img}
                   alt={member.name}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 720px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
               <figcaption>

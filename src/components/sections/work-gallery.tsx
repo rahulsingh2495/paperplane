@@ -263,12 +263,11 @@ export function WorkGallery() {
                 onClick={() => setLightboxState({ itemIndex: rawIndex, photoIndex: 0 })}
               >
                 <div className="wcard__img">
-                  <Image
+                  <img
                     src={`/map/img/t/${it.images[0]}`}
                     alt={`${it.title}, ${it.place}`}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    loading="lazy"
+                    decoding="async"
                   />
                   {it.images.length > 1 && (
                     <span className="wcard__count">{it.images.length} photos</span>
@@ -473,57 +472,53 @@ export function WorkGallery() {
           if (e.target === e.currentTarget) closeLightbox();
         }}
       >
-        {activeItem && (
-          <>
-            <button
-              className="lb__close"
-              id="lbClose"
-              type="button"
-              aria-label="Close"
-              onClick={closeLightbox}
-            >
-              ✕
-            </button>
-            {activeItem.images.length > 1 && (
-              <button
-                className="lb__nav lb__prev"
-                id="lbPrev"
-                type="button"
-                aria-label="Previous"
-                onClick={prevPhoto}
-              >
-                ←
-              </button>
-            )}
-            <figure>
-              <img
-                id="lbImg"
-                src={`/map/img/${activeItem.images[lightboxState!.photoIndex]}`}
-                alt={`${activeItem.title}, ${activeItem.place}`}
-              />
-              <figcaption>
-                <span id="lbCap">
-                  {activeItem.title} · {activeItem.place}
-                </span>{" "}
-                <span id="lbIdx">
-                  {activeItem.images.length > 1
-                    ? `${lightboxState!.photoIndex + 1} / ${activeItem.images.length}`
-                    : ""}
-                </span>
-              </figcaption>
-            </figure>
-            {activeItem.images.length > 1 && (
-              <button
-                className="lb__nav lb__next"
-                id="lbNext"
-                type="button"
-                aria-label="Next"
-                onClick={nextPhoto}
-              >
-                →
-              </button>
-            )}
-          </>
+        <button
+          className="lb__close"
+          id="lbClose"
+          type="button"
+          aria-label="Close"
+          onClick={closeLightbox}
+        >
+          ✕
+        </button>
+        {activeItem && activeItem.images.length > 1 && (
+          <button
+            className="lb__nav lb__prev"
+            id="lbPrev"
+            type="button"
+            aria-label="Previous"
+            onClick={prevPhoto}
+          >
+            ←
+          </button>
+        )}
+        <figure>
+          <img
+            id="lbImg"
+            src={activeItem ? `/map/img/${activeItem.images[lightboxState!.photoIndex]}` : ""}
+            alt={activeItem ? `${activeItem.title}, ${activeItem.place}` : ""}
+          />
+          <figcaption>
+            <span id="lbCap">
+              {activeItem ? `${activeItem.title} · ${activeItem.place}` : ""}
+            </span>{" "}
+            <span id="lbIdx">
+              {activeItem && activeItem.images.length > 1
+                ? `${lightboxState!.photoIndex + 1} / ${activeItem.images.length}`
+                : ""}
+            </span>
+          </figcaption>
+        </figure>
+        {activeItem && activeItem.images.length > 1 && (
+          <button
+            className="lb__nav lb__next"
+            id="lbNext"
+            type="button"
+            aria-label="Next"
+            onClick={nextPhoto}
+          >
+            →
+          </button>
         )}
       </div>
     </>

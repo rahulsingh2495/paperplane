@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 
 const MAKES = [
   {
@@ -60,12 +59,11 @@ export function MakesGrid() {
                 rel="noopener noreferrer"
               >
                 <div className="make__img">
-                  <Image
+                  <img
                     src={item.img}
                     alt={item.alt}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <h3 className="make__title">{item.title}</h3>
                 </div>
@@ -77,12 +75,11 @@ export function MakesGrid() {
           return (
             <Link key={item.title} className="make" href={item.href}>
               <div className="make__img">
-                <Image
+                <img
                   src={item.img}
                   alt={item.alt}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <h3 className="make__title">{item.title}</h3>
               </div>
