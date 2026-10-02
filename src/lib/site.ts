@@ -5,7 +5,7 @@ export const site = {
   domain: "https://paperplane-psi.vercel.app",
   description:
     "Hand-painted murals, sculptures, AR and CGI for brands, cities and public spaces. 63 projects across 15 Indian cities and 7 countries.",
-  phone: "+91-84603-49325",
+  phone: "+91 84603 49325",
   whatsappUrl:
     "https://wa.me/918460349325?text=Hi%20Paperplane!%20I%20have%20a%20wall%20that%20needs%20your%20magic.",
   email: "connect.paperplane@gmail.com",

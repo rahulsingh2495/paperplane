@@ -1,7 +1,22 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { site } from "@/lib/site";
 
 export function Footer() {
+  const pathname = usePathname();
+
+  // Reference site does not have megaword or footer on map or 404 pages
+  if (pathname?.startsWith("/map") || pathname === "/404") {
+    return null;
+  }
+
+  const isHome = pathname === "/";
+  const isStudio = pathname?.startsWith("/studio");
+  const isWork = pathname?.startsWith("/work");
+  const isContact = pathname?.startsWith("/contact");
+
   return (
     <>
       <div className="megaword" aria-hidden="true">
@@ -11,16 +26,22 @@ export function Footer() {
       <footer className="footer">
         <div className="footer__brand">Paperplane</div>
         <div className="footer__links">
-          <Link href="/">Home</Link>
+          {!isHome && <Link href="/">Home</Link>}
           <Link href="/studio/">Studio</Link>
-          <Link href="/work/">Work</Link>
+          {(isStudio || isContact) && <Link href="/work/">Work</Link>}
           <Link href="/map/">India Map</Link>
-          <Link href="/contact/">Contact</Link>
-          <Link href="/privacy/">Privacy Policy</Link>
-          <a href={site.social.instagram} target="_blank" rel="noopener noreferrer">
+          <a
+            href={site.social.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Instagram
           </a>
-          <a href={site.social.linkedin} target="_blank" rel="noopener noreferrer">
+          <a
+            href={site.social.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             LinkedIn
           </a>
         </div>

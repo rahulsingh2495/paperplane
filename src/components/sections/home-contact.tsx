@@ -28,7 +28,7 @@ export function HomeContact() {
         >
           {site.email} <span>→</span>
         </a>
-        <a className="link-lg" href={`tel:${site.phone}`}>
+        <a className="link-lg" href={`tel:${site.phone.replace(/\s+/g, "")}`}>
           {site.phone} <span>→</span>
         </a>
       </div>

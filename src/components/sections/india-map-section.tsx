@@ -662,17 +662,17 @@ function IndiaMapContent() {
       </div>
 
       {/* FOOTER CTA */}
-      <aside className="mapfoot">
+      <footer className="mapfoot">
         <p>Your city missing from this map?</p>
         <a
           className="mapfoot__btn"
-          href={site.whatsappUrl}
+          href="https://wa.me/918460349325?text=Hi%20Paperplane!%20Let's%20put%20my%20city%20on%20your%20map."
           target="_blank"
           rel="noopener noreferrer"
         >
           Put it on the map →
         </a>
-      </aside>
+      </footer>
     </>
   );
 }

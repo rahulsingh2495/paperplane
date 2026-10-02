@@ -84,7 +84,7 @@ export function ContactForm() {
         <p>
           We&apos;ve received your message and will get back to you soon. If it&apos;s urgent, message
           us on{" "}
-          <a href={site.whatsappUrl} target="_blank" rel="noopener noreferrer">
+          <a href="https://wa.me/918460349325" target="_blank" rel="noopener noreferrer">
             WhatsApp
           </a>
           .

@@ -2,8 +2,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Page Not Found",
-  description: "The wall you are looking for is still blank.",
+  title: {
+    absolute: "Page not found | Paperplane",
+  },
   robots: {
     index: false,
     follow: false,
