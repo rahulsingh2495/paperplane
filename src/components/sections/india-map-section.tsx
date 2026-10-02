@@ -7,6 +7,19 @@ import { INDIA, CITIES, PROJECTS, INTERNATIONAL, type ProjectItem } from "@/lib/
 import { site } from "@/lib/site";
 import { StatNumber } from "@/components/ui/stat-number";
 
+const SPLAT = "M0,-10.5 C5.5,-10 10.4,-5.8 10,0.3 C11.8,6.4 5.2,10 0.2,10.4 C-5.8,11.6 -9.6,6 -10.6,0.4 C-11.4,-6.4 -5,-9 0,-10.5 Z";
+
+const COMPACT_POS: Record<string, [number, number]> = {
+  Delhi: [222, 236],
+  Gurugram: [193, 262],
+  Noida: [244, 254],
+  Mumbai: [100, 484],
+  Pune: [144, 504],
+  Lonavala: [110, 528],
+  Nashik: [142, 458],
+  Gandhidham: [44, 380],
+};
+
 const LABELS: Record<string, [number, number, "start" | "end" | "middle"]> = {
   Delhi: [14, -14, "start"],
   Gurugram: [-14, 12, "end"],
@@ -90,6 +103,24 @@ function IndiaMapContent() {
     title: string;
     location: string;
   } | null>(null);
+
+  const [scale, setScale] = useState(1);
+  const [isCompact, setIsCompact] = useState(false);
+
+  useEffect(() => {
+    const updateScale = () => {
+      const mapWrap = document.getElementById("mapWrap");
+      const w = mapWrap?.clientWidth || window.innerWidth;
+      setIsCompact(w < 640);
+      if (w < 420) setScale(2.0);
+      else if (w < 640) setScale(1.7);
+      else if (w < 820) setScale(1.3);
+      else setScale(1);
+    };
+    updateScale();
+    window.addEventListener("resize", updateScale);
+    return () => window.removeEventListener("resize", updateScale);
+  }, []);
 
   const cityGroups = useMemo(() => {
     const map: Record<string, ProjectItem[]> = {};
@@ -276,80 +307,122 @@ function IndiaMapContent() {
                   />
                   <feDisplacementMap in="SourceGraphic" in2="noise" scale="7" />
                 </filter>
+                <filter id="splatRough" x="-40%" y="-40%" width="180%" height="180%">
+                  <feTurbulence
+                    type="fractalNoise"
+                    baseFrequency="0.35"
+                    numOctaves="2"
+                    seed="3"
+                    result="n"
+                  />
+                  <feDisplacementMap in="SourceGraphic" in2="n" scale="4" />
+                </filter>
               </defs>
 
               <path className="map__country" d={INDIA.d} />
 
               <g id="pinLayer">
-                {Object.entries(CITIES).map(([city, [cx, cy]]) => {
+                {Object.entries(CITIES).map(([city, [cx, cy]], idx) => {
                   const projs = cityGroups[city];
                   if (!projs || projs.length === 0) return null;
                   const count = projs.length;
-                  const labelCfg = LABELS[city] || [14, 4, "start"];
-                  const [dx, dy, anchor] = labelCfg;
+                  const [x, y] = isCompact && COMPACT_POS[city] ? COMPACT_POS[city] : [cx, cy];
 
-                  // Tape dimensions based on string length
-                  const textLen = city.length * 8 + 26;
-                  const tapeW = textLen + 14;
-                  const tapeH = 22;
-                  const tapeX = anchor === "end" ? dx - tapeW : anchor === "middle" ? dx - tapeW / 2 : dx;
-                  const tapeY = dy - 11;
+                  if (isCompact) {
+                    const dotR = (6 + Math.sqrt(count) * 1.6) * scale;
+                    const dotScale = dotR / 10.5;
+                    return (
+                      <g
+                        key={city}
+                        className="pin"
+                        transform={`translate(${x},${y})`}
+                        tabIndex={0}
+                        role="button"
+                        aria-label={`${city}: ${count} work${count > 1 ? "s" : ""}`}
+                        onClick={() => openPlace(city)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            openPlace(city);
+                          }
+                        }}
+                      >
+                        <circle className="pin__hit" r={dotR + 20} fill="transparent" />
+                        <g className="pin__inner">
+                          <g className="pin__dotWrap" filter="url(#splatRough)">
+                            <path className="pin__dot" d={SPLAT} transform={`scale(${dotScale})`} />
+                          </g>
+                          <text
+                            className="pin__badgeNum"
+                            fontSize={dotR * 0.95}
+                            textAnchor="middle"
+                            dominantBaseline="central"
+                          >
+                            {count}
+                          </text>
+                        </g>
+                      </g>
+                    );
+                  }
+
+                  const [, dy, anchor] = LABELS[city] || [0, 0, "middle"];
+                  const dotR = (6 + Math.sqrt(count) * 2.6) * scale;
+                  const dotScale = dotR / 10.5;
+                  const fontC = 11.5 * scale;
+                  const name = city.toUpperCase();
+                  const padX = 8 * scale;
+                  const textW = name.length * fontC * 0.68;
+                  const badgeH = 15 * scale;
+                  const badgeW = String(count).length * fontC * 0.65 + fontC * 0.95;
+                  const tapeH = 21 * scale;
+                  const tapeW = padX + textW + 7 * scale + badgeW + padX * 0.8;
+                  const gap = dotR + 4 * scale;
+
+                  let tx = anchor === "start" ? gap : anchor === "end" ? -gap - tapeW : -tapeW / 2;
+                  let ty = anchor === "middle" ? Math.max(dotR + 5 * scale, dy * scale) : dy * scale - tapeH / 2;
+
+                  const margin = 14;
+                  if (x + tx < margin) tx = margin - x;
+                  if (x + tx + tapeW > 700 - margin) tx = 700 - margin - tapeW - x;
+
+                  const rot = (idx % 2 ? 2.5 : -3) + (idx % 3) * 0.7;
+                  const rcx = tx + tapeW / 2, rcy = ty + tapeH / 2;
+                  const badgeX = tx + padX + textW + 7 * scale;
 
                   return (
                     <g
                       key={city}
                       className="pin"
-                      transform={`translate(${cx}, ${cy})`}
-                      role="button"
+                      transform={`translate(${x},${y})`}
                       tabIndex={0}
-                      aria-label={`${city}: ${count} projects`}
-                      onClick={() => setActiveCity(city)}
+                      role="button"
+                      aria-label={`${city}: ${count} work${count > 1 ? "s" : ""}`}
+                      onClick={() => openPlace(city)}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
                           e.preventDefault();
-                          setActiveCity(city);
+                          openPlace(city);
                         }
                       }}
                     >
-                      {/* Splat / Dot */}
-                      <g className="pin__dotWrap">
-                        <circle cx="0" cy="0" r="7.5" className="pin__dot" />
-                        <circle cx="0" cy="0" r="3.5" fill="#fff" opacity="0.85" />
-                      </g>
-
-                      {/* Tape banner */}
-                      <g>
-                        <rect
-                          x={tapeX}
-                          y={tapeY}
-                          width={tapeW}
-                          height={tapeH}
-                          rx="2"
-                          className="pin__tape"
-                        />
-                        <text
-                          x={tapeX + 8}
-                          y={tapeY + 15}
-                          className="pin__city text-[12px] font-bold"
-                        >
-                          {city}
-                        </text>
-                        <rect
-                          x={tapeX + tapeW - 20}
-                          y={tapeY + 3}
-                          width="16"
-                          height="16"
-                          rx="8"
-                          className="pin__badge"
-                        />
-                        <text
-                          x={tapeX + tapeW - 12}
-                          y={tapeY + 15}
-                          textAnchor="middle"
-                          className="pin__badgeNum text-[10px] font-extrabold fill-white"
-                        >
-                          {count}
-                        </text>
+                      <circle className="pin__hit" r={dotR + 18} fill="transparent" />
+                      <g className="pin__inner">
+                        <g className="pin__dotWrap" filter="url(#splatRough)">
+                          <path className="pin__dot" d={SPLAT} transform={`scale(${dotScale})`} />
+                          <circle className="pin__dot" cx={dotR * 1.05} cy={-dotR * 0.55} r={Math.max(1.4, dotR * 0.16)} />
+                        </g>
+                        <g className="pin__flag" transform={`rotate(${rot} ${rcx} ${rcy})`}>
+                          <g filter="url(#splatRough)">
+                            <rect className="pin__tape" x={tx} y={ty} width={tapeW} height={tapeH} rx={1.5 * scale} />
+                          </g>
+                          <text className="pin__city" x={tx + padX} y={ty + tapeH / 2} fontSize={fontC} dominantBaseline="central">
+                            {name}
+                          </text>
+                          <rect className="pin__badge" x={badgeX} y={ty + (tapeH - badgeH) / 2} width={badgeW} height={badgeH} rx={badgeH / 2} />
+                          <text className="pin__badgeNum" x={badgeX + badgeW / 2} y={ty + tapeH / 2} fontSize={fontC * 0.85} textAnchor="middle" dominantBaseline="central">
+                            {count}
+                          </text>
+                        </g>
                       </g>
                     </g>
                   );
@@ -361,20 +434,20 @@ function IndiaMapContent() {
           {/* CITIES LIST ASIDE */}
           <aside className="stage__cities" aria-label="Cities">
             <p className="stage__label">Cities</p>
-            <div className="citytapes" role="group" aria-label="Jump to a city">
+            <div className="citytapes" id="cityTapes" role="group" aria-label="Jump to a city">
               {Object.keys(cityGroups)
                 .sort((a, b) => (cityGroups[b]?.length || 0) - (cityGroups[a]?.length || 0))
-                .map((city) => {
+                .map((city, i) => {
                   const count = cityGroups[city]?.length || 0;
                   return (
                     <button
                       key={city}
                       type="button"
                       className="citytape"
-                      onClick={() => setActiveCity(city)}
+                      style={{ "--tilt": `${i % 2 ? 1.6 : -1.6}deg` } as React.CSSProperties}
+                      onClick={() => openPlace(city)}
                     >
-                      <span>{city}</span>
-                      <b>{count}</b>
+                      {city} <b>{count}</b>
                     </button>
                   );
                 })}
@@ -391,21 +464,14 @@ function IndiaMapContent() {
           </h2>
           <p className="side__blurb">The paint doesn&apos;t stop at the border.</p>
         </div>
-        <div className="intl">
+        <div className="intl" id="intlCards">
           {INTERNATIONAL.map((item, idx) => (
             <button
               key={item.slug}
               type="button"
               className="intl__card"
-              style={{ "--tilt": `${((idx % 3) - 1) * 1.5}deg` } as React.CSSProperties}
-              onClick={() =>
-                setLightboxData({
-                  images: item.images,
-                  currentIndex: 0,
-                  title: item.title,
-                  location: item.place,
-                })
-              }
+              style={{ "--tilt": `${idx % 2 ? 1.5 : -1.5}deg` } as React.CSSProperties}
+              onClick={() => openPlace(item.place)}
             >
               <div className="relative aspect-[4/3] w-full overflow-hidden">
                 <Image
